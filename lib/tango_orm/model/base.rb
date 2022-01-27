@@ -60,7 +60,7 @@ module TangoOrm
 
         column_config = ""
         formatted_options.each do |key, value|
-          line = "#{key.to_s} #{value},"
+          line = "#{key.to_s} #{value}, "
           column_config << line
         end
 
