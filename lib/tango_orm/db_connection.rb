@@ -1,17 +1,26 @@
+# frozen_string_literal: true
+
 require 'yaml'
 require 'pg'
 require "tango_orm/environment"
+require "tango_orm/connection_pool"
+
 
 module TangoOrm
   class DBConnection
-    def self.set_connection
-      PG.connect(dbname: config['database'])
+    attr_reader :config, :connection_pool
+
+    def initialize
+      @config = YAML.load(File.read("config/database.yml"))[ENVIRONMENT]
+      @connection_pool = TangoOrm::ConnectionPool.instance
     end
 
-    private
+    def self.create
+      new.create
+    end
 
-    def self.config
-      @@config ||= YAML.load(File.read("config/database.yml"))[ENVIRONMENT]
+    def create
+      connection_pool.call { PG.connect(dbname: config['database']) }
     end
   end
 end

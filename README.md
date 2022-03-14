@@ -23,7 +23,7 @@ Or install it yourself as:
 
 ## Usage
 
-Tango assumes there is a `database.yml` file in the root of your project. This file is used to setup your database connection. Currently, only development environment credentials are considered.
+Tango assumes there is a `database.yml` file in a config folder in the root of your project. This file is used to setup your database connection. The `APP_ENV` environment variable is used to select the appropriate configuration for each environment. `development` config will be used by default if `APP_ENV` is not set.
 
 Example `database.yml` file:
 ```

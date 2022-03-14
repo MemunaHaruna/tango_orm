@@ -1,3 +1,3 @@
 module TangoOrm
-  ENVIRONMENT = "development" # temporary default
+  ENVIRONMENT = ENV.fetch("APP_ENV", "development")
 end

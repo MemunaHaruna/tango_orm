@@ -1,5 +1,5 @@
 require "tango_orm/version"
-require "tango_orm/model/base"
+require "tango_orm/model"
 
 module TangoOrm
   class Error < StandardError; end
