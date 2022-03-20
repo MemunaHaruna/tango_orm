@@ -25,7 +25,7 @@ Or install it yourself as:
 
 Tango assumes there is a `database.yml` file in a config folder in the root of your project. This file is used to setup your database connection. The `APP_ENV` environment variable is used to select the appropriate configuration for each environment. `development` config will be used by default if `APP_ENV` is not set.
 
-Example `database.yml` file:
+Example `config/database.yml` file:
 ```
 development:
   database: school_development
@@ -35,13 +35,13 @@ development:
   port: 5432
 ```
 
-Afterwards, you can add ORM capabilities to your models by inheriting from `TangoOrm::Model::Base` e.g:
+Afterwards, you can add ORM capabilities to your models by inheriting from `TangoOrm::Model` e.g:
 
 Example model:
 ```ruby
 require 'tango_orm'
 
-class Student < TangoOrm::Model::Base
+class Student < TangoOrm::Model
 end
 ```
 

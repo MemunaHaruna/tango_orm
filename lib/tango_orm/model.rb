@@ -1,5 +1,5 @@
 require "active_support/inflector"
-require "tango_orm/db_connection"
+require "tango_orm/db"
 
 module TangoOrm
   class Model
@@ -8,11 +8,7 @@ module TangoOrm
     end
 
     def self.db
-      @db ||= establish_connection
-    end
-
-    def self.establish_connection
-      DBConnection.create
+      @db ||= DB.new
     end
 
     def self.columns
@@ -21,7 +17,7 @@ module TangoOrm
             FROM information_schema.columns
             WHERE table_name = '#{table_name}';
           SQL
-      names = db.exec(sql)
+      names = db.execute{|connection| connection.exec(sql) }
       names.map{|name| name["column_name"].to_sym}
     end
 
@@ -72,13 +68,13 @@ module TangoOrm
           );
         SQL
 
-      db.exec(sql)
+      db.execute{|connection| connection.exec(sql) }
       puts "Table '#{table_name}' created successfully"
     end
 
     def self.drop_table
       sql = "DROP TABLE #{table_name}"
-      db.exec(sql)
+      db.execute{|connection| connection.exec(sql) }
       puts "Table '#{table_name}' dropped successfully"
     end
 
@@ -95,9 +91,12 @@ module TangoOrm
         RETURNING id;
       SQL
 
-      db.exec(sql, variable_values) do |result|
-        self.id = result[0]["id"].to_i
+      db.execute do |connection|
+        connection.exec(sql, variable_values) do |result|
+          self.id = result[0]["id"].to_i
+        end
       end
+
       self
     end
 
@@ -120,25 +119,31 @@ module TangoOrm
         RETURNING *;
       SQL
 
-      db.exec(sql, variable_values) do |result|
-        self.class.new_from_db(result[0])
+      db.execute do |connection|
+        connection.exec(sql, variable_values) do |result|
+          self.class.new_from_db(result[0])
+        end
       end
     end
 
     def self.find_by_id(id)
       sql = "SELECT * FROM #{table_name} WHERE id = $1"
 
-      db.exec(sql, [id]) do |result|
-        result.map do |row|
-          new_from_db(row)
-        end
-      end.first
+      db.execute do |connection|
+        connection.exec(sql, [id]) do |result|
+          result.map do |row|
+            new_from_db(row)
+          end
+        end.first
+      end
     end
 
     def self.all
-      db.exec("SELECT * FROM #{table_name}") do |result|
-        result.map do |row|
-          new_from_db(row)
+      db.execute do |connection|
+        connection.exec("SELECT * FROM #{table_name}") do |result|
+          result.map do |row|
+            new_from_db(row)
+          end
         end
       end
     end
