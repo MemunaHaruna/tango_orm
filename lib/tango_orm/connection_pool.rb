@@ -47,19 +47,10 @@ module TangoOrm
       @@instance ||= new
     end
 
-    # def call(&connector)
-    #   if !pool_size_limit_reached?
-    #     create_new_connection(&connector)
-    #   else
-    #     retry_connection(&connector)
-    #   end
-    # end
-
     def self.stat
       {
         max_size: instance.max_size,
         created_connections: instance.created_connections,
-        # busy: instance.created_connections - instance.idle_connections,
         idle: instance.idle_connections,
         checkout_timeout: instance.checkout_timeout,
         idle_timeout: instance.idle_timeout,
@@ -120,9 +111,6 @@ module TangoOrm
 
     private
 
-    # attr_reader :created_connections, :connection_queue, :idle_timeout, :checkout_timeout,
-    #             :reaping_frequency, :key, :key_count, :mutex, :resource
-
     def pool_size_limit_reached?
       @created_connections >= max_size
     end
@@ -135,14 +123,6 @@ module TangoOrm
     end
 
     def create_connection(&connector)
-      # idle_connection = active_connections.find{|conn| !conn.is_busy }
-      # return idle_connection if idle_connection
-      # return if pool_size_limit_reached?
-
-      # connection = connector.call
-      # active_connections << connection
-      # connection
-
       allowed_wait_duration = current_time + checkout_timeout
       timeout_msg = "could not obtain a database connection within #{checkout_timeout} seconds. "\
                     "The pool size is currently #{max_size}; consider increasing it"
@@ -172,27 +152,6 @@ module TangoOrm
         connection
       end
     end
-
-    # def retry_connection(&connector)
-    #   allowed_attempts = CHECKOUT_RETRY_ATTEMPTS
-    #   start_time = Time.now
-    #   new_connection = nil
-    #   timeout_msg = "could not obtain a database connection within 5 seconds. "\
-    #                 "The pool size is currently #{max_size}; consider increasing it"
-
-    #   while allowed_attempts > 0
-    #     elapsed_time_in_seconds = (Time.now - start_time)
-    #     break if elapsed_time_in_seconds > checkout_timeout
-
-    #     new_connection = create_new_connection
-    #     break if new_connection && active_connections.include?(new_connection)
-    #     allowed_attempts -= 1
-    #   end
-
-    #   if !new_connection && !active_connections.include?(new_connection)
-    #     raise ConnectionTimeoutError, ": #{timeout_msg}"
-    #   end
-    # end
   end
 end
 
