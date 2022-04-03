@@ -1,4 +1,9 @@
 require "bundler/setup"
+require 'spec_helper'
+require 'pry-byebug'
+
+ENV["APP_ENV"] ||= "test"
+
 require "tango_orm"
 
 RSpec.configure do |config|

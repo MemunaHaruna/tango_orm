@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require 'pry-byebug'
 require 'singleton'
-require 'yaml'
-require "tango_orm/environment"
-
 
 module TangoOrm
   class ConnectionPool
@@ -34,7 +30,7 @@ module TangoOrm
                 :reaping_frequency, :key, :key_count, :mutex, :resource
 
     def initialize
-      @config = YAML.load(File.read("config/database.yml"))[ENVIRONMENT]
+      @config = TangoOrm.config
       @created_connections = 0
       @connection_queue = Queue.new
       @max_size = @config[:pool] || DEFAULT_MAX_POOL_SIZE

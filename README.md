@@ -23,7 +23,7 @@ Or install it yourself as:
 
 ## Usage
 
-Tango assumes there is a `database.yml` file in a config folder in the root of your project. This file is used to setup your database connection. The `APP_ENV` environment variable is used to select the appropriate configuration for each environment. `development` config will be used by default if `APP_ENV` is not set.
+By default, Tango grabs your database configuration values from `./config/database.yml`. The `APP_ENV` environment variable is used to select the appropriate configuration for each environment. `development` config will be used by default if `APP_ENV` is not set.
 
 Example `config/database.yml` file:
 ```
@@ -33,6 +33,16 @@ development:
   password:
   host: localhost
   port: 5432
+```
+
+To specify a different file path:
+```ruby
+# call this in an initialize step, before running any queries
+
+# Passing the environment is optional. If no environment is passed,
+# Tango will use APP_ENV and fallback to development if APP_ENV isn't set.
+
+TangoOrm.configure('random/config/path/config.yml', Rails.env)
 ```
 
 Afterwards, you can add ORM capabilities to your models by inheriting from `TangoOrm::Model` e.g:
@@ -91,8 +101,12 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 Bug reports and pull requests are welcome on GitHub at https://github.com/MemunaHaruna/tango_orm.
 
 # To do
-- Write tests
-- Helpful methods (destroy, where, find, find_by, first, last, order, limit, destroy, update_or_create, update_all, destroy_all, changed?, valid?, persisted? save!, find!)
+- Add tests
+- Add linting
+- Add Connection Pool section to README
+- Add CI
+- Refactor create_table, save & update methods
+- Add helpful methods: where, find, find_by, first, last, order, limit, destroy, update_or_create, update_all, destroy_all, changed?, valid?, persisted? save!, find!
 - associations
 - migrations
 - support for other DBs other than Postgres
@@ -100,7 +114,6 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Memuna
 - lazy loading
 - automatically saved created_at & updated_at fields
 - concurrency & thread safety
-- connection pooling
 - transactions
 - dirty tracking (only save the fields that actually changed)
 - prepared statements, stored procedures, two-phase commit, transaction isolation, master/slave configurations, and database sharding

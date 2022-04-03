@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "active_support/inflector"
 require "tango_orm/db"
 
@@ -47,6 +49,7 @@ module TangoOrm
       getters.include?(method_name) || setters.include?(method_name) || super
     end
 
+    # TO-DO: refactor
     def self.create_table(options)
       formatted_options = {}
       options.each do |key, value|
@@ -78,6 +81,7 @@ module TangoOrm
       puts "Table '#{table_name}' dropped successfully"
     end
 
+    # TO-DO: refactor
     def save
       db = self.class.db
       db_table = self.class.table_name
@@ -105,6 +109,7 @@ module TangoOrm
       new_song.save
     end
 
+    # TO-DO: refactor
     def update
       db = self.class.db
       db_table = self.class.table_name
